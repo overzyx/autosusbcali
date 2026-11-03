@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "parametros_sistema")
@@ -23,15 +23,17 @@ public class ParametroSistema {
     @Column(name = "valor", nullable = false)
     private String valor;
 
+    // Valores permitidos: STRING, NUMBER, BOOLEAN, JSON
     @Column(name = "tipo_dato", length = 10, nullable = false)
     private String tipoDato;
 
     @Column(name = "descripcion")
     private String descripcion;
 
-    @Column(name = "usuario_actualiza_id")
-    private Long usuarioActualizaId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_actualiza_id")
+    private Usuario usuarioActualiza;
 
     @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;
+    private OffsetDateTime fechaActualizacion;
 }

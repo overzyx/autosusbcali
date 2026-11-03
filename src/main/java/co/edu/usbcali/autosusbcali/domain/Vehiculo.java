@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "vehiculos")
@@ -24,12 +24,14 @@ public class Vehiculo {
     @Column(name = "placa", length = 10, unique = true)
     private String placa;
 
-    @Column(name = "modelo_id", nullable = false)
-    private Long modeloId;
+    @ManyToOne
+    @JoinColumn(name = "modelo_id", nullable = false)
+    private Modelo modelo;
 
     @Column(name = "anio", nullable = false)
     private Short anio;
 
+    // Valores permitidos: NUEVO, USADO
     @Column(name = "tipo", length = 6, nullable = false)
     private String tipo;
 
@@ -42,6 +44,7 @@ public class Vehiculo {
     @Column(name = "precio_base", nullable = false, precision = 15, scale = 2)
     private BigDecimal precioBase;
 
+    // Valores permitidos: INGRESADO, EN_VERIFICACION, VERIFICADO, PUBLICADO, RESERVADO, EN_VENTA, VENDIDO, RETIRADO
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
@@ -49,17 +52,18 @@ public class Vehiculo {
     private String descripcion;
 
     @Column(name = "publicado_en")
-    private LocalDateTime publicadoEn;
+    private OffsetDateTime publicadoEn;
 
     @Column(name = "retirado_en")
-    private LocalDateTime retiradoEn;
+    private OffsetDateTime retiradoEn;
 
-    @Column(name = "usuario_registra_id", nullable = false)
-    private Long usuarioRegistraId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_registra_id", nullable = false)
+    private Usuario usuarioRegistra;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 
     @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;
+    private OffsetDateTime fechaActualizacion;
 }

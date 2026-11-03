@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "pagos")
@@ -18,18 +18,22 @@ public class Pago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "venta_id", nullable = false)
-    private Long ventaId;
+    @ManyToOne
+    @JoinColumn(name = "venta_id", nullable = false)
+    private Venta venta;
 
+    // Valores permitidos: CUOTA_INICIAL, SALDO, DESEMBOLSO_CREDITO
     @Column(name = "tipo_pago", length = 30, nullable = false)
     private String tipoPago;
 
     @Column(name = "monto", nullable = false, precision = 15, scale = 2)
     private BigDecimal monto;
 
+    // Valores permitidos: TRANSFERENCIA, TARJETA, PSE, EFECTIVO, DESEMBOLSO
     @Column(name = "medio_pago", length = 30, nullable = false)
     private String medioPago;
 
+    // Valores permitidos: PENDIENTE, PROCESANDO, APROBADO, RECHAZADO
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
@@ -37,8 +41,8 @@ public class Pago {
     private String referenciaExterna;
 
     @Column(name = "fecha_pago")
-    private LocalDateTime fechaPago;
+    private OffsetDateTime fechaPago;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

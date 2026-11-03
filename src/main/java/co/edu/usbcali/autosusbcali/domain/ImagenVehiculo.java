@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "imagenes_vehiculo")
@@ -17,8 +17,9 @@ public class ImagenVehiculo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
     @Column(name = "url", length = 500, nullable = false)
     private String url;
@@ -30,5 +31,5 @@ public class ImagenVehiculo {
     private Boolean esPrincipal;
 
     @Column(name = "fecha_carga", nullable = false)
-    private LocalDateTime fechaCarga;
+    private OffsetDateTime fechaCarga;
 }

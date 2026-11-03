@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "ventas")
@@ -21,33 +21,40 @@ public class Venta {
     @Column(name = "numero_venta", length = 30, nullable = false, unique = true)
     private String numeroVenta;
 
-    @Column(name = "oportunidad_id", nullable = false, unique = true)
-    private Long oportunidadId;
+    @OneToOne
+    @JoinColumn(name = "oportunidad_id", nullable = false, unique = true)
+    private OportunidadVenta oportunidad;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
-    @Column(name = "comprador_id", nullable = false)
-    private Long compradorId;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id", nullable = false)
+    private Usuario comprador;
 
-    @Column(name = "asesor_id", nullable = false)
-    private Long asesorId;
+    @ManyToOne
+    @JoinColumn(name = "asesor_id", nullable = false)
+    private Usuario asesor;
 
     @Column(name = "precio_final", nullable = false, precision = 15, scale = 2)
     private BigDecimal precioFinal;
 
+    // Valores permitidos: CONTADO, CREDITO
     @Column(name = "forma_pago", length = 10, nullable = false)
     private String formaPago;
 
-    @Column(name = "solicitud_credito_id")
-    private Long solicitudCreditoId;
+    @ManyToOne
+    @JoinColumn(name = "solicitud_credito_id")
+    private SolicitudCredito solicitudCredito;
 
+    // Valores permitidos: EN_PROCESO, CERRADA, ANULADA
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
     @Column(name = "fecha_cierre")
-    private LocalDateTime fechaCierre;
+    private OffsetDateTime fechaCierre;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

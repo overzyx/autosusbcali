@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "auditoria")
@@ -17,8 +19,9 @@ public class Auditoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "usuario_id")
-    private Long usuarioId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
     @Column(name = "accion", length = 100, nullable = false)
     private String accion;
@@ -29,10 +32,12 @@ public class Auditoria {
     @Column(name = "entidad_id")
     private Long entidadId;
 
-    @Column(name = "datos_anteriores", columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "datos_anteriores", columnDefinition = "jsonb")
     private String datosAnteriores;
 
-    @Column(name = "datos_nuevos", columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "datos_nuevos", columnDefinition = "jsonb")
     private String datosNuevos;
 
     @Column(name = "ip_origen", length = 45)
@@ -42,5 +47,5 @@ public class Auditoria {
     private String userAgent;
 
     @Column(name = "fecha", nullable = false)
-    private LocalDateTime fecha;
+    private OffsetDateTime fecha;
 }

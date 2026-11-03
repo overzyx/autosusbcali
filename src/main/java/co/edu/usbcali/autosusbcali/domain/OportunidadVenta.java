@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "oportunidades_venta")
@@ -17,24 +17,29 @@ public class OportunidadVenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
-    @Column(name = "comprador_id", nullable = false)
-    private Long compradorId;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id", nullable = false)
+    private Usuario comprador;
 
-    @Column(name = "asesor_id")
-    private Long asesorId;
+    @ManyToOne
+    @JoinColumn(name = "asesor_id")
+    private Usuario asesor;
 
+    // Valores permitidos: NUEVA, EN_NEGOCIACION, COTIZACION_ENVIADA, CREDITO_EN_TRAMITE, GANADA, PERDIDA
     @Column(name = "estado", length = 30, nullable = false)
     private String estado;
 
+    // Valores permitidos: WEB, PRESENCIAL, TELEFONO
     @Column(name = "origen", length = 20)
     private String origen;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 
     @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;
+    private OffsetDateTime fechaActualizacion;
 }

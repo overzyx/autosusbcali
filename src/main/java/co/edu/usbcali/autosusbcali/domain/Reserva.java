@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "reservas")
@@ -18,27 +18,32 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehiculo_id", nullable = false, unique = true)
-    private Long vehiculoId;
+    @OneToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false, unique = true)
+    private Vehiculo vehiculo;
 
-    @Column(name = "oportunidad_id", nullable = false)
-    private Long oportunidadId;
+    @ManyToOne
+    @JoinColumn(name = "oportunidad_id", nullable = false)
+    private OportunidadVenta oportunidad;
 
-    @Column(name = "comprador_id", nullable = false)
-    private Long compradorId;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id", nullable = false)
+    private Usuario comprador;
 
-    @Column(name = "asesor_id")
-    private Long asesorId;
+    @ManyToOne
+    @JoinColumn(name = "asesor_id")
+    private Usuario asesor;
 
     @Column(name = "monto_reserva", precision = 12, scale = 2)
     private BigDecimal montoReserva;
 
     @Column(name = "vigencia_hasta", nullable = false)
-    private LocalDateTime vigenciaHasta;
+    private OffsetDateTime vigenciaHasta;
 
+    // Valores permitidos: ACTIVA, EXPIRADA, CANCELADA, CONVERTIDA
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

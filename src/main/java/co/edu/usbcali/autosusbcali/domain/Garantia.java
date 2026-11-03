@@ -17,9 +17,11 @@ public class Garantia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "venta_id", nullable = false, unique = true)
-    private Long ventaId;
+    @OneToOne
+    @JoinColumn(name = "venta_id", nullable = false, unique = true)
+    private Venta venta;
 
+    // Valores permitidos: FABRICA, CONCESIONARIA
     @Column(name = "tipo", length = 20, nullable = false)
     private String tipo;
 

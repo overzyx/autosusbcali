@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "permisos")
+@Table(name = "permisos", uniqueConstraints = @UniqueConstraint(columnNames = {"modulo", "accion"}))
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,6 +18,7 @@ public class Permiso {
     @Column(name = "modulo", length = 50, nullable = false)
     private String modulo;
 
+    // Valores permitidos: LECTURA, ESCRITURA, APROBACION
     @Column(name = "accion", length = 30, nullable = false)
     private String accion;
 

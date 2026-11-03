@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "citas_servicio")
@@ -17,21 +17,25 @@ public class CitaServicio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "comprador_id", nullable = false)
-    private Long compradorId;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id", nullable = false)
+    private Usuario comprador;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
-    @Column(name = "asesor_id")
-    private Long asesorId;
+    @ManyToOne
+    @JoinColumn(name = "asesor_id")
+    private Usuario asesor;
 
     @Column(name = "tipo_servicio", length = 100, nullable = false)
     private String tipoServicio;
 
     @Column(name = "fecha_cita", nullable = false)
-    private LocalDateTime fechaCita;
+    private OffsetDateTime fechaCita;
 
+    // Valores permitidos: AGENDADA, CONFIRMADA, REALIZADA, CANCELADA
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
@@ -39,5 +43,5 @@ public class CitaServicio {
     private String observaciones;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

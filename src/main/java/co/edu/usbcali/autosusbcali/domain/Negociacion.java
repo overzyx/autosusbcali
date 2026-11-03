@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "negociaciones")
@@ -18,11 +18,13 @@ public class Negociacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "oportunidad_id", nullable = false)
-    private Long oportunidadId;
+    @ManyToOne
+    @JoinColumn(name = "oportunidad_id", nullable = false)
+    private OportunidadVenta oportunidad;
 
-    @Column(name = "asesor_id", nullable = false)
-    private Long asesorId;
+    @ManyToOne
+    @JoinColumn(name = "asesor_id", nullable = false)
+    private Usuario asesor;
 
     @Column(name = "precio_ofertado", nullable = false, precision = 15, scale = 2)
     private BigDecimal precioOfertado;
@@ -36,18 +38,20 @@ public class Negociacion {
     @Column(name = "requiere_aprobacion", nullable = false)
     private Boolean requiereAprobacion;
 
+    // Valores permitidos: PENDIENTE, APROBADA, RECHAZADA
     @Column(name = "estado_aprobacion", length = 20)
     private String estadoAprobacion;
 
-    @Column(name = "aprobador_id")
-    private Long aprobadorId;
+    @ManyToOne
+    @JoinColumn(name = "aprobador_id")
+    private Usuario aprobador;
 
     @Column(name = "fecha_aprobacion")
-    private LocalDateTime fechaAprobacion;
+    private OffsetDateTime fechaAprobacion;
 
     @Column(name = "observaciones")
     private String observaciones;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

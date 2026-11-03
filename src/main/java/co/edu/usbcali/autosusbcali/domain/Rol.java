@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "roles")
 @AllArgsConstructor
@@ -23,4 +25,5 @@ public class Rol {
 
     @Column(name = "activo", nullable = false)
     private Boolean activo;
+
 }

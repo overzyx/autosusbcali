@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "contratos")
@@ -17,8 +17,9 @@ public class Contrato {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "venta_id", nullable = false, unique = true)
-    private Long ventaId;
+    @OneToOne
+    @JoinColumn(name = "venta_id", nullable = false, unique = true)
+    private Venta venta;
 
     @Column(name = "numero_contrato", length = 50, nullable = false, unique = true)
     private String numeroContrato;
@@ -33,8 +34,8 @@ public class Contrato {
     private Boolean firmadoAsesor;
 
     @Column(name = "fecha_firma")
-    private LocalDateTime fechaFirma;
+    private OffsetDateTime fechaFirma;
 
     @Column(name = "fecha_generacion", nullable = false)
-    private LocalDateTime fechaGeneracion;
+    private OffsetDateTime fechaGeneracion;
 }

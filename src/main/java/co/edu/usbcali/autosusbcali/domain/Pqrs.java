@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "pqrs")
@@ -20,9 +20,11 @@ public class Pqrs {
     @Column(name = "numero_radicado", length = 30, nullable = false, unique = true)
     private String numeroRadicado;
 
-    @Column(name = "comprador_id", nullable = false)
-    private Long compradorId;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id", nullable = false)
+    private Usuario comprador;
 
+    // Valores permitidos: PETICION, QUEJA, RECLAMO, SUGERENCIA
     @Column(name = "tipo", length = 20, nullable = false)
     private String tipo;
 
@@ -32,21 +34,24 @@ public class Pqrs {
     @Column(name = "descripcion", nullable = false)
     private String descripcion;
 
-    @Column(name = "venta_id")
-    private Long ventaId;
+    @ManyToOne
+    @JoinColumn(name = "venta_id")
+    private Venta venta;
 
+    // Valores permitidos: RADICADA, EN_GESTION, RESUELTA, CERRADA
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
-    @Column(name = "usuario_asignado_id")
-    private Long usuarioAsignadoId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_asignado_id")
+    private Usuario usuarioAsignado;
 
     @Column(name = "respuesta")
     private String respuesta;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 
     @Column(name = "fecha_cierre")
-    private LocalDateTime fechaCierre;
+    private OffsetDateTime fechaCierre;
 }

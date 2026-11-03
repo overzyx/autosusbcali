@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "cotizaciones")
@@ -22,14 +22,17 @@ public class Cotizacion {
     @Column(name = "codigo", length = 30, nullable = false, unique = true)
     private String codigo;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
-    @Column(name = "comprador_id", nullable = false)
-    private Long compradorId;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id", nullable = false)
+    private Usuario comprador;
 
-    @Column(name = "asesor_id")
-    private Long asesorId;
+    @ManyToOne
+    @JoinColumn(name = "asesor_id")
+    private Usuario asesor;
 
     @Column(name = "precio_base", nullable = false, precision = 15, scale = 2)
     private BigDecimal precioBase;
@@ -46,9 +49,10 @@ public class Cotizacion {
     @Column(name = "vigencia_hasta", nullable = false)
     private LocalDate vigenciaHasta;
 
+    // Valores permitidos: BORRADOR, ENVIADA, ACEPTADA, RECHAZADA, VENCIDA
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

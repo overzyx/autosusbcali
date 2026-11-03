@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "tramites_traspaso")
@@ -17,21 +17,24 @@ public class TramiteTraspaso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "venta_id", nullable = false)
-    private Long ventaId;
+    @ManyToOne
+    @JoinColumn(name = "venta_id", nullable = false)
+    private Venta venta;
 
+    // Valores permitidos: INICIADO, EN_TRAMITE, EN_TRANSITO, COMPLETADO, RECHAZADO
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
     @Column(name = "observaciones")
     private String observaciones;
 
-    @Column(name = "usuario_gestiona_id")
-    private Long usuarioGestionaId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_gestiona_id")
+    private Usuario usuarioGestiona;
 
     @Column(name = "fecha_inicio", nullable = false)
-    private LocalDateTime fechaInicio;
+    private OffsetDateTime fechaInicio;
 
     @Column(name = "fecha_completado")
-    private LocalDateTime fechaCompletado;
+    private OffsetDateTime fechaCompletado;
 }

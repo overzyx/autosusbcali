@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "verificaciones_runt")
@@ -17,8 +19,9 @@ public class VerificacionRunt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
     @Column(name = "placa", length = 10, nullable = false)
     private String placa;
@@ -35,12 +38,14 @@ public class VerificacionRunt {
     @Column(name = "estado_legal", length = 50)
     private String estadoLegal;
 
-    @Column(name = "respuesta_raw", columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "respuesta_raw", columnDefinition = "jsonb")
     private String respuestaRaw;
 
-    @Column(name = "usuario_consulta_id", nullable = false)
-    private Long usuarioConsultaId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_consulta_id", nullable = false)
+    private Usuario usuarioConsulta;
 
     @Column(name = "fecha_consulta", nullable = false)
-    private LocalDateTime fechaConsulta;
+    private OffsetDateTime fechaConsulta;
 }

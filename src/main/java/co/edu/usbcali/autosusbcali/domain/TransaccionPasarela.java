@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "transacciones_pasarela")
@@ -18,8 +20,9 @@ public class TransaccionPasarela {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pago_id", nullable = false)
-    private Long pagoId;
+    @ManyToOne
+    @JoinColumn(name = "pago_id", nullable = false)
+    private Pago pago;
 
     @Column(name = "proveedor", length = 50, nullable = false)
     private String proveedor;
@@ -33,9 +36,10 @@ public class TransaccionPasarela {
     @Column(name = "monto", precision = 15, scale = 2)
     private BigDecimal monto;
 
-    @Column(name = "respuesta_raw", columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "respuesta_raw", columnDefinition = "jsonb")
     private String respuestaRaw;
 
     @Column(name = "fecha_transaccion", nullable = false)
-    private LocalDateTime fechaTransaccion;
+    private OffsetDateTime fechaTransaccion;
 }

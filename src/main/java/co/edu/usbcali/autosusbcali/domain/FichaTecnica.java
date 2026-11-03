@@ -15,8 +15,9 @@ public class FichaTecnica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehiculo_id", nullable = false, unique = true)
-    private Long vehiculoId;
+    @OneToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false, unique = true)
+    private Vehiculo vehiculo;
 
     @Column(name = "motor", length = 100)
     private String motor;

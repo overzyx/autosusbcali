@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "documentos_vehiculo")
@@ -18,9 +18,11 @@ public class DocumentoVehiculo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehiculo_id", nullable = false)
-    private Long vehiculoId;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
 
+    // Valores permitidos: SOAT, TECNOMECANICA, TARJETA_PROPIEDAD, RTM, OTRO
     @Column(name = "tipo_documento", length = 50, nullable = false)
     private String tipoDocumento;
 
@@ -37,8 +39,9 @@ public class DocumentoVehiculo {
     private Boolean validado;
 
     @Column(name = "fecha_validacion")
-    private LocalDateTime fechaValidacion;
+    private OffsetDateTime fechaValidacion;
 
-    @Column(name = "usuario_valida_id")
-    private Long usuarioValidaId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_valida_id")
+    private Usuario usuarioValida;
 }

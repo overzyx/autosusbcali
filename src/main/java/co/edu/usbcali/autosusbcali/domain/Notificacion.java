@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "notificaciones")
@@ -17,8 +17,9 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "usuario_id", nullable = false)
-    private Long usuarioId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     @Column(name = "tipo", length = 50, nullable = false)
     private String tipo;
@@ -29,6 +30,7 @@ public class Notificacion {
     @Column(name = "cuerpo")
     private String cuerpo;
 
+    // Valores permitidos: EMAIL, SMS, PUSH, IN_APP
     @Column(name = "canal", length = 10, nullable = false)
     private String canal;
 
@@ -42,8 +44,8 @@ public class Notificacion {
     private Long referenciaId;
 
     @Column(name = "fecha_envio")
-    private LocalDateTime fechaEnvio;
+    private OffsetDateTime fechaEnvio;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 }

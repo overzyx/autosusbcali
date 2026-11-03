@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "facturas")
@@ -18,8 +18,9 @@ public class Factura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "venta_id", nullable = false, unique = true)
-    private Long ventaId;
+    @OneToOne
+    @JoinColumn(name = "venta_id", nullable = false, unique = true)
+    private Venta venta;
 
     @Column(name = "numero_factura", length = 50, nullable = false, unique = true)
     private String numeroFactura;
@@ -39,9 +40,10 @@ public class Factura {
     @Column(name = "total", nullable = false, precision = 15, scale = 2)
     private BigDecimal total;
 
+    // Valores permitidos: GENERADA, ENVIADA_DIAN, ACEPTADA, RECHAZADA
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
     @Column(name = "fecha_emision", nullable = false)
-    private LocalDateTime fechaEmision;
+    private OffsetDateTime fechaEmision;
 }

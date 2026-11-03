@@ -1,4 +1,5 @@
 package co.edu.usbcali.autosusbcali.domain;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ public class Marca {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", length = 100, nullable = false)
+    @Column(name = "nombre", length = 100, nullable = false, unique = true)
     private String nombre;
 
     @Column(name = "activo", nullable = false)
