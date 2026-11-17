@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ModeloRepository extends JpaRepository<Modelo, Long> {
+    Boolean existsByMarcaId(Long marcaId);
 }
