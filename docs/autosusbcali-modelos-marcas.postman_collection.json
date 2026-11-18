@@ -1,0 +1,1194 @@
+{
+  "info": {
+    "name": "Autosusbcali - Modelos y Marcas",
+    "description": "Pruebas del CRUD de Modelo (relación @ManyToOne con Marca, JOIN) y del CRUD de Marca.\nEjecuta cada carpeta en orden (o usa Run). La app debe estar corriendo en IntelliJ.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "modeloId",
+      "value": ""
+    },
+    {
+      "key": "modeloOtraMarcaId",
+      "value": ""
+    },
+    {
+      "key": "marcaId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Modelos (con JOIN a Marca)",
+      "item": [
+        {
+          "name": "01. Listar todos los modelos (JOIN FETCH)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos"
+              ]
+            },
+            "description": "Mira la consola de IntelliJ: aparece el SQL con 'join marcas'."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Cada modelo trae el nombre de su marca', () => {",
+                  "    pm.response.json().forEach(m => pm.expect(m.marcaNombre).to.be.a('string'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02. Modelos por id de marca (Toyota = 3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/por-marca/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "por-marca",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Todos son de Toyota', () => {",
+                  "    pm.response.json().forEach(m => pm.expect(m.marcaNombre).to.eql('Toyota'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03. Modelos por nombre de marca (JOIN implícito)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/por-nombre-marca/Toyota",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "por-nombre-marca",
+                "Toyota"
+              ]
+            },
+            "description": "Mira la consola de IntelliJ: aparece el SQL con 'left join marcas'."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04. Modelo por id (Tracker)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/por-id/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "por-id",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Es el Tracker de Chevrolet', () => {",
+                  "    const m = pm.response.json();",
+                  "    pm.expect(m.nombre).to.eql('Tracker');",
+                  "    pm.expect(m.marcaNombre).to.eql('Chevrolet');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05. Crear modelo Yaris en Toyota (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Yaris\",\n    \"marcaId\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 201', () => pm.response.to.have.status(201));",
+                  "// Guarda el id para las siguientes peticiones",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('modeloId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06. Crear modelo repetido en la misma marca (error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Corolla\",\n    \"marcaId\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"La marca Toyota ya tiene un modelo con el nombre Corolla\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07. Crear el mismo nombre en OTRA marca (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Corolla\",\n    \"marcaId\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Sí se permite: la restricción es nombre único DENTRO de cada marca."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('modeloOtraMarcaId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08. Crear con marca que no existe (error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"X\",\n    \"marcaId\": 999\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"No se ha encontrado la marca por id 999\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09. Crear sin marcaId (error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"X\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"El id de la marca no puede ser nulo\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Crear con nombre vacío (error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"\",\n    \"marcaId\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"El nombre no puede ser nulo ni estar vacío\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Modificar nombre del modelo creado (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/modificar/{{modeloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "modificar",
+                "{{modeloId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Yaris Cross\",\n    \"marcaId\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Nombre actualizado', () => pm.expect(pm.response.json().nombre).to.eql('Yaris Cross'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Cambiar el modelo de marca, a Mazda (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/modificar/{{modeloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "modificar",
+                "{{modeloId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Yaris Cross\",\n    \"marcaId\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Ahora es de Mazda', () => pm.expect(pm.response.json().marcaNombre).to.eql('Mazda'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Modificar con nombre que ya existe en esa marca (error)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/modificar/{{modeloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "modificar",
+                "{{modeloId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Mazda3\",\n    \"marcaId\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"La marca Mazda ya tiene otro modelo con el nombre Mazda3\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14. Eliminar modelo con vehículos (error)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/eliminar/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "eliminar",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"No se puede eliminar el modelo Tracker porque tiene vehículos asociados\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15. Eliminar el modelo creado (204, eliminación física)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/eliminar/{{modeloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "eliminar",
+                "{{modeloId}}"
+              ]
+            },
+            "description": "Mira la consola de IntelliJ: aparece el log de AUDITORIA."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16. Eliminar otra vez el mismo modelo (error: ya no existe)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/eliminar/{{modeloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "eliminar",
+                "{{modeloId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"No se ha encontrado el modelo por id\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "17. Limpieza: eliminar el Corolla de Mazda (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/modelos/eliminar/{{modeloOtraMarcaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modelos",
+                "eliminar",
+                "{{modeloOtraMarcaId}}"
+              ]
+            },
+            "description": "Borra el modelo creado en la prueba 07 para dejar la base como estaba."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Marcas",
+      "item": [
+        {
+          "name": "01. Listar todas las marcas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02. Listar marcas activas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/activas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "activas"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03. Listar marcas inactivas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/inactivas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "inactivas"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04. Marca por id (Chevrolet)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/por-id/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "por-id",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05. Marca por nombre (Toyota)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/por-nombre/Toyota",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "por-nombre",
+                "Toyota"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06. Crear marca (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Marca Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('marcaId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07. Crear marca repetida (error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Toyota\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"Ya existe una marca con el nombre Toyota\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08. Crear marca con nombre vacío (error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/guardar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "guardar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"El nombre no puede ser nulo ni estar vacío\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09. Modificar la marca creada (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/modificar/{{marcaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "modificar",
+                "{{marcaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Marca Postman Modificada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Modificar con el nombre de otra marca (error)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/modificar/{{marcaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "modificar",
+                "{{marcaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Toyota\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"Ya existe otra marca con el nombre Toyota\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Eliminar marca con modelos (error)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/eliminar/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "eliminar",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"No se puede eliminar la marca Chevrolet porque tiene modelos asociados\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Eliminar la marca creada (200)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/eliminar/{{marcaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "eliminar",
+                "{{marcaId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Eliminar otra vez la misma marca (error)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/marcas/eliminar/{{marcaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marcas",
+                "eliminar",
+                "{{marcaId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 500', () => pm.response.to.have.status(500));",
+                  "pm.test('Mensaje correcto', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message || '').to.include(\"No se ha encontrado la marca por id\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
